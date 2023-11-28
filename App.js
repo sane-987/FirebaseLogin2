@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 
-//import {firebase} from '../database/firebase.config';
+import {firebase} from '../database/firebase.config';
 
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
