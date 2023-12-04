@@ -6,13 +6,14 @@ import {
   ImageBackground,
   TouchableHighlight,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {firebase} from '../database/firebase.config';
+import {auth} from 'firebase/auth';
 
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
-const Login = ({navigation}) => {
+const App = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -24,14 +25,15 @@ const Login = ({navigation}) => {
     }
   };
 
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        '1094060878120-igqtnr39t4gf9pijrmqlgrjkd4210r1r.apps.googleusercontent.com',
+      offlineAccess: true,
+    });
+  }, []);
+
   const onGoogleButtonPress = async () => {
-    firebase
-      .auth()
-      //configure client ids
-      .GoogleSignin.configure({
-        androidClientId:
-          '316245655700-2d78emuuk1flopf0aq4o0d5v361omgrc.apps.googleusercontent.com',
-      });
     // Check if your device supports Google Play
     await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
     // Get the users ID token
@@ -44,74 +46,72 @@ const Login = ({navigation}) => {
     return auth().signInWithCredential(googleCredential);
   };
 
-  // const handleLogin = async (email, password) => {
-  //   console.log('login in user');
-  //   console.log(email, password);
+  const handleLogin = async (email, password) => {
+    console.log('login in user');
+    console.log(email, password);
 
-  //   try {
-  //     const response = await firebase
-  //       .auth()
-  //       .signInWithEmailAndPassword(email, password);
-  //     console.log(response);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
+    try {
+      const response = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password);
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require('../assets/images/sukuna.jpg')}
-        resizeMode="stretch"
-        style={styles.img}
-        blurRadius={2}>
-        <View style={styles.loginContainer}>
-          <Text style={styles.welcomMsg}>Welcome Back !</Text>
+      <View style={styles.loginContainer}>
+        <Text style={styles.welcomMsg}>Welcome Back !</Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Email"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={val => updateInputVal(val, 'email')}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Password"
-            autoCapitalize="none"
-            value={password}
-            onChangeText={val => updateInputVal(val, 'password')}
-            secureTextEntry={true}
-          />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Email"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={val => updateInputVal(val, 'email')}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Password"
+          autoCapitalize="none"
+          value={password}
+          onChangeText={val => updateInputVal(val, 'password')}
+          secureTextEntry={true}
+        />
 
-          {/* <TouchableHighlight
-            style={styles.btn}
-            onPress={() => handleLogin(email, password)}>
-            <Text style={styles.text}>Login</Text>
-          </TouchableHighlight> */}
-          <TouchableHighlight
-            style={styles.btn}
-            onPress={() => navigation.navigate('Register')}>
-            <Text style={styles.text}>New user? Create Account</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style={styles.btn}>
-            <Text
-              style={styles.text}
-              onPress={() =>
-                onGoogleButtonPress().then(() => {
-                  console.log('Signed in with Google');
-                })
-              }>
-              Login using Google
-            </Text>
-          </TouchableHighlight>
-        </View>
-      </ImageBackground>
+        <TouchableHighlight
+          style={styles.btn}
+          onPress={() =>
+            handleLogin(email, password).then(() => {
+              console.log('Signed in successfull');
+            })
+          }>
+          <Text style={styles.text}>Login</Text>
+        </TouchableHighlight>
+        <TouchableHighlight
+          style={styles.btn}
+          onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.text}>New user? Create Account</Text>
+        </TouchableHighlight>
+        <TouchableHighlight style={styles.btn}>
+          <Text
+            style={styles.text}
+            onPress={() =>
+              onGoogleButtonPress().then(() => {
+                console.log('Signed in with Google');
+              })
+            }>
+            Login using Google
+          </Text>
+        </TouchableHighlight>
+      </View>
     </View>
   );
 };
 
-export default Login;
+export default App;
 
 const styles = StyleSheet.create({
   container: {
