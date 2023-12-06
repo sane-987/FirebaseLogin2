@@ -106,6 +106,8 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    implementation platform('com.google.firebase:firebase-bom:32.6.0')
+    implementation 'com.google.firebase:firebase-analytics'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
@@ -118,17 +120,9 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-    implementation platform('com.google.firebase:firebase-bom:32.6.0')
-    implementation 'com.google.firebase:firebase-analytics'
+    
 }
 
-plugins {
-  id 'com.android.application'
-
-  // Add the Google services Gradle plugin
-  id 'com.google.gms.google-services'
-
-  ...
-}
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply plugin: 'com.google.gms.google-services'

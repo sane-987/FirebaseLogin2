@@ -8,8 +8,7 @@ import {
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 
-import {firebase} from '../database/firebase.config';
-import {auth} from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
 
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
@@ -28,7 +27,7 @@ const App = () => {
   useEffect(() => {
     GoogleSignin.configure({
       webClientId:
-        '1094060878120-igqtnr39t4gf9pijrmqlgrjkd4210r1r.apps.googleusercontent.com',
+        '1094060878120-2js3leqadkhmo7ja5spa097hbet3c7rr.apps.googleusercontent.com',
       offlineAccess: true,
     });
   }, []);
@@ -39,11 +38,22 @@ const App = () => {
     // Get the users ID token
     const {idToken} = await GoogleSignin.signIn();
 
+    console.log(idToken);
+    console.log('********************');
     // Create a Google credential with the token
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
+    console.log(googleCredential);
     // Sign-in the user with the credential
     return auth().signInWithCredential(googleCredential);
+  };
+
+  const onSignOut = async () => {
+    try {
+      await GoogleSignin.signOut();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleLogin = async (email, password) => {
@@ -92,7 +102,7 @@ const App = () => {
         </TouchableHighlight>
         <TouchableHighlight
           style={styles.btn}
-          onPress={() => navigation.navigate('Register')}>
+          onPress={() => console.log('clicked new user btn')}>
           <Text style={styles.text}>New user? Create Account</Text>
         </TouchableHighlight>
         <TouchableHighlight style={styles.btn}>
@@ -100,10 +110,21 @@ const App = () => {
             style={styles.text}
             onPress={() =>
               onGoogleButtonPress().then(() => {
-                console.log('Signed in with Google');
+                console.log('Signed In Successfully');
               })
             }>
             Login using Google
+          </Text>
+        </TouchableHighlight>
+        <TouchableHighlight style={styles.btn}>
+          <Text
+            style={styles.text}
+            onPress={() =>
+              onSignOut().then(() => {
+                console.log('Signed Out Successfully');
+              })
+            }>
+            SignOut
           </Text>
         </TouchableHighlight>
       </View>
